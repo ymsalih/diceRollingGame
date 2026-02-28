@@ -233,8 +233,7 @@ class _SerbestZarEkraniState extends State<SerbestZarEkrani>
 
   @override
   void dispose() {
-    _animController.dispose();
-    _player.dispose(); // Bellek sızıntısını önlemek için kapat
+    _animController.dispose(); // Sonra animasyonu
     super.dispose();
   }
 
