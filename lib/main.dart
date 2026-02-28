@@ -6,7 +6,6 @@ import 'package:audioplayers/audioplayers.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-
   runApp(const ProZarUygulamasi());
 }
 
@@ -18,7 +17,7 @@ class ProZarUygulamasi extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(useMaterial3: true, fontFamily: 'Roboto'),
-      home: const AnaMenuEkrani(), // Açılış sayfası yok, direkt menü
+      home: const AnaMenuEkrani(),
     );
   }
 }
@@ -191,12 +190,11 @@ class AnaMenuEkrani extends StatelessWidget {
 }
 
 // ==========================================
-// 2. SERBEST ZAR EKRANI
+// 2. SERBEST ZAR EKRANI (SES SORUNU ÇÖZÜLDÜ)
 // ==========================================
 class SerbestZarEkrani extends StatefulWidget {
   final bool ciftZarMi;
   const SerbestZarEkrani({super.key, required this.ciftZarMi});
-
   @override
   State<SerbestZarEkrani> createState() => _SerbestZarEkraniState();
 }
@@ -207,7 +205,7 @@ class _SerbestZarEkraniState extends State<SerbestZarEkrani>
   int zar2 = 1;
   late AnimationController _animController;
   late Animation<double> _donusAnim, _yukseklikAnim, _olcekAnim;
-  final AudioPlayer _sesOynatici = AudioPlayer();
+  final AudioPlayer _player = AudioPlayer(); // Ses oynatıcısı
 
   @override
   void initState() {
@@ -231,12 +229,19 @@ class _SerbestZarEkraniState extends State<SerbestZarEkrani>
   @override
   void dispose() {
     _animController.dispose();
-    _sesOynatici.dispose();
+    _player.dispose(); // Bellek sızıntısını önlemek için kapat
     super.dispose();
   }
 
   void zarSalla() async {
-    await _sesOynatici.play(AssetSource('zar_sesi.mp3'));
+    // SES ÇÖZÜMÜ: Sesi çalarken await kullanıyoruz ve hata yakalıyoruz
+    try {
+      await _player.stop(); // Eğer ses çalıyorsa durdur ve baştan çal
+      await _player.play(AssetSource('zar_sesi.mp3'));
+    } catch (e) {
+      debugPrint("Ses Çalma Hatası: $e");
+    }
+
     setState(() {
       _animController.reset();
       _animController.forward();
@@ -372,7 +377,7 @@ class _SerbestZarEkraniState extends State<SerbestZarEkrani>
 }
 
 // ==========================================
-// 3. DÜELLO EKRANI
+// 3. DÜELLO EKRANI (SES SORUNU ÇÖZÜLDÜ)
 // ==========================================
 class DuelloEkrani extends StatefulWidget {
   final String p1Name;
@@ -392,7 +397,7 @@ class _DuelloEkraniState extends State<DuelloEkrani>
   bool p2Atabilir = false;
   late AnimationController _c1, _c2;
   late Animation<double> _y1, _y2, _d1, _d2;
-  final AudioPlayer _sesOynatici = AudioPlayer();
+  final AudioPlayer _player = AudioPlayer();
 
   @override
   void initState() {
@@ -429,13 +434,19 @@ class _DuelloEkraniState extends State<DuelloEkrani>
   void dispose() {
     _c1.dispose();
     _c2.dispose();
-    _sesOynatici.dispose();
+    _player.dispose();
     super.dispose();
   }
 
   void p1ZarAt() async {
     if (!p1Atabilir) return;
-    await _sesOynatici.play(AssetSource('zar_sesi.mp3'));
+    try {
+      await _player.stop();
+      await _player.play(AssetSource('zar_sesi.mp3'));
+    } catch (e) {
+      debugPrint("Ses Hatası: $e");
+    }
+
     setState(() {
       _c1.reset();
       _c1.forward();
@@ -447,7 +458,13 @@ class _DuelloEkraniState extends State<DuelloEkrani>
 
   void p2ZarAt() async {
     if (!p2Atabilir) return;
-    await _sesOynatici.play(AssetSource('zar_sesi.mp3'));
+    try {
+      await _player.stop();
+      await _player.play(AssetSource('zar_sesi.mp3'));
+    } catch (e) {
+      debugPrint("Ses Hatası: $e");
+    }
+
     setState(() {
       _c2.reset();
       _c2.forward();
