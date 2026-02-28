@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // Tam ekran modu için eklendi
 import 'dart:math';
+import 'package:audioplayers/audioplayers.dart';
 
 void main() {
   // Tam ekran moduna geçmek için (üst barı gizler, oyun hissi verir)
@@ -233,6 +234,7 @@ class _SerbestZarEkraniState extends State<SerbestZarEkrani>
   @override
   void dispose() {
     _animController.dispose();
+    _player.dispose(); // Bellek sızıntısını önlemek için kapat
     super.dispose();
   }
 
