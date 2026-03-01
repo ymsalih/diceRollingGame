@@ -19,7 +19,6 @@ class ProZarUygulamasi extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(useMaterial3: true, fontFamily: 'Roboto'),
-      // Açılış sayfası kaldırıldı, uygulama direkt Ana Menü ile başlar
       home: const AnaMenuEkrani(),
     );
   }
@@ -207,6 +206,7 @@ class _SerbestZarEkraniState extends State<SerbestZarEkrani>
     with SingleTickerProviderStateMixin {
   int zar1 = 1;
   int zar2 = 1;
+  final AudioPlayer _player = AudioPlayer(); // SES OYNATICI EKLENDİ
 
   late AnimationController _animController;
   late Animation<double> _donusAnim, _yukseklikAnim, _olcekAnim;
@@ -233,11 +233,15 @@ class _SerbestZarEkraniState extends State<SerbestZarEkrani>
 
   @override
   void dispose() {
-    _animController.dispose(); // Sonra animasyonu
+    _animController.dispose();
+    _player.dispose(); // SES OYNATICI TEMİZLENDİ
     super.dispose();
   }
 
   void zarSalla() {
+    // SESİ OYNAT (Web ve Mobil uyumlu)
+    _player.play(AssetSource('zar_sesi.mp3'));
+
     setState(() {
       _animController.reset();
       _animController.forward();
@@ -393,6 +397,7 @@ class _DuelloEkraniState extends State<DuelloEkrani>
   int p2Skor = 0;
   bool p1Atabilir = true;
   bool p2Atabilir = false;
+  final AudioPlayer _player = AudioPlayer(); // SES OYNATICI EKLENDİ
 
   late AnimationController _c1, _c2;
   late Animation<double> _y1, _y2, _d1, _d2;
@@ -434,11 +439,13 @@ class _DuelloEkraniState extends State<DuelloEkrani>
   void dispose() {
     _c1.dispose();
     _c2.dispose();
+    _player.dispose(); // SES OYNATICI TEMİZLENDİ
     super.dispose();
   }
 
   void p1ZarAt() {
     if (!p1Atabilir) return;
+    _player.play(AssetSource('zar_sesi.mp3')); // SES ÇAL
     setState(() {
       _c1.reset();
       _c1.forward();
@@ -450,6 +457,7 @@ class _DuelloEkraniState extends State<DuelloEkrani>
 
   void p2ZarAt() {
     if (!p2Atabilir) return;
+    _player.play(AssetSource('zar_sesi.mp3')); // SES ÇAL
     setState(() {
       _c2.reset();
       _c2.forward();
@@ -649,7 +657,7 @@ class ZarTasarimi extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: color.withValues(alpha: 0.3),
+            color: color.withOpacity(0.3),
             blurRadius: 15,
             spreadRadius: 2,
           ),
